@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>GameHub — Play Instantly</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+:root {
+  --bg:#08080c; --s1:#0d0d13; --s2:#13131c; --s3:#1a1a26; --s4:#22222f;
+  --border:rgba(255,255,255,0.06); --border-strong:rgba(255,255,255,0.1);
+  --text:#f5f5f8; --text-2:#9d9daa; --text-3:#64646f;
+  --accent:#a855f7; --accent-b:#c084fc; --accent-2:#ec4899; --accent-3:#06b6d4;
+  --r-sm:8px; --r-md:12px; --r-lg:16px; --r-xl:20px;
+  --ease:cubic-bezier(.4,0,.2,1);
+}
+html, body { min-height:100%; }
+body { font-family:'Inter',system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden; -webkit-font-smoothing:antialiased; padding-bottom:66px; }
+body::before {
+  content:''; position:fixed; inset:0; z-index:-2; pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 40% at 15% 0%, rgba(168,85,247,0.15), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 85% 100%, rgba(236,72,153,0.1), transparent 60%),
+    radial-gradient(ellipse 40% 30% at 50% 50%, rgba(6,182,212,0.06), transparent 60%);
+}
+button, input { font-family:inherit; }
+
+/* HEADER */
+.header {
+  position:sticky; top:0; z-index:50;
+  background:rgba(8,8,12,0.75); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.header-inner { max-width:1320px; margin:0 auto; padding:14px 24px; display:flex; align-items:center; gap:16px; }
+@media (max-width:600px) { .header-inner { padding:12px 16px; gap:10px; } }
+.brand { display:flex; align-items:center; gap:10px; flex-shrink:0; }
+.brand-icon {
+  width:34px; height:34px; border-radius:10px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  display:flex; align-items:center; justify-content:center; font-size:16px;
+  box-shadow:0 4px 14px rgba(168,85,247,0.35);
+}
+.brand-name { font-family:'Outfit',sans-serif; font-weight:700; font-size:17px; letter-spacing:-0.02em; }
+@media (max-width:480px) { .brand-name { display:none; } }
+.search-wrap { flex:1; max-width:420px; position:relative; }
+.search-wrap svg { position:absolute; left:14px; top:50%; transform:translateY(-50%); width:15px; height:15px; color:var(--text-3); pointer-events:none; }
+.search-wrap input {
+  width:100%; padding:10px 14px 10px 38px;
+  background:var(--s2); border:1px solid var(--border);
+  border-radius:10px; color:var(--text); font-size:13.5px; outline:none;
+  transition:all .15s;
+}
+.search-wrap input:focus { border-color:rgba(168,85,247,0.5); background:var(--s3); }
+.search-wrap input::placeholder { color:var(--text-3); }
+.btn-primary {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:10px 16px; border-radius:10px; border:none;
+  background:linear-gradient(135deg,var(--accent),#8b3ee8); color:#fff;
+  font-size:13.5px; font-weight:600; cursor:pointer;
+  box-shadow:0 4px 14px rgba(168,85,247,0.35);
+  transition:all .15s var(--ease); white-space:nowrap;
+}
+.btn-primary:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(168,85,247,0.45); }
+.btn-primary:active { transform:translateY(0); }
+.btn-primary svg { width:14px; height:14px; }
+@media (max-width:480px) { .btn-primary { padding:10px 12px; } .btn-primary .label { display:none; } }
+
+/* CONTAINER */
+.container { max-width:1320px; margin:0 auto; padding:0 24px; }
+@media (max-width:600px) { .container { padding:0 16px; } }
+
+/* HERO */
+.hero { padding:32px 0 8px; }
+.hero-card {
+  position:relative; overflow:hidden; border-radius:var(--r-xl);
+  background:linear-gradient(135deg, rgba(168,85,247,0.15), rgba(236,72,153,0.1));
+  border:1px solid var(--border-strong);
+  padding:32px; min-height:280px;
+  display:flex; flex-direction:column; justify-content:flex-end;
+  transition:all .3s var(--ease);
+}
+@media (max-width:600px) { .hero-card { padding:24px 20px; min-height:240px; } }
+.hero-card::before {
+  content:''; position:absolute; inset:0; z-index:0;
+  background:linear-gradient(180deg, transparent 0%, rgba(8,8,12,0.7) 100%);
+}
+.hero-cover {
+  position:absolute; inset:0; z-index:-1;
+  background-size:cover; background-position:center;
+  opacity:0.5;
+}
+.hero-badge {
+  position:relative; z-index:1;
+  display:inline-flex; align-items:center; gap:6px;
+  background:rgba(255,255,255,0.15); backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,0.2);
+  padding:5px 12px; border-radius:99px;
+  font-size:11.5px; font-weight:600; letter-spacing:0.02em;
+  margin-bottom:14px; align-self:flex-start;
+  text-transform:uppercase;
+}
+.hero-badge::before { content:'●'; color:#22c55e; font-size:10px; animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+.hero-title { position:relative; z-index:1; font-family:'Outfit',sans-serif; font-size:32px; font-weight:800; letter-spacing:-0.02em; margin-bottom:8px; line-height:1.15; }
+@media (max-width:600px) { .hero-title { font-size:24px; } }
+.hero-desc { position:relative; z-index:1; font-size:14px; color:var(--text-2); margin-bottom:20px; max-width:520px; }
+.hero-actions { position:relative; z-index:1; display:flex; gap:10px; flex-wrap:wrap; }
+.hero-actions .btn-primary { padding:12px 22px; font-size:14px; }
+
+/* CATEGORIES */
+.categories-wrap { padding:24px 0 8px; overflow-x:auto; scrollbar-width:none; }
+.categories-wrap::-webkit-scrollbar { display:none; }
+.categories { display:flex; gap:8px; }
+.cat-pill {
+  padding:8px 16px; border-radius:99px;
+  border:1px solid var(--border); background:var(--s1);
+  color:var(--text-2); font-size:13px; font-weight:500;
+  cursor:pointer; white-space:nowrap;
+  transition:all .15s var(--ease);
+}
+.cat-pill:hover { background:var(--s2); color:var(--text); border-color:var(--border-strong); }
+.cat-pill.active { background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#fff; border-color:transparent; box-shadow:0 4px 14px rgba(168,85,247,0.3); }
+
+/* SECTIONS */
+.section { padding:28px 0; }
+.section-header { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:16px; }
+.section-title { font-family:'Outfit',sans-serif; font-size:19px; font-weight:700; letter-spacing:-0.01em; }
+.section-subtitle { font-size:13px; color:var(--text-2); margin-top:2px; }
+
+/* GRID */
+.grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:14px; }
+@media (min-width:768px) { .grid { grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:18px; } }
+.card {
+  background:var(--s1); border:1px solid var(--border); border-radius:var(--r-lg);
+  overflow:hidden; cursor:pointer; position:relative;
+  transition:all .25s var(--ease);
+}
+.card:hover { transform:translateY(-4px); border-color:rgba(168,85,247,0.4); box-shadow:0 16px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(168,85,247,0.15); }
+.card-cover { aspect-ratio:16/10; position:relative; background:var(--s3); overflow:hidden; }
+.card-cover img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:transform .4s var(--ease); z-index:1; }
+.card:hover .card-cover img { transform:scale(1.05); }
+.card-fallback {
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Outfit',sans-serif; font-size:42px; font-weight:800; color:#fff;
+}
+.card-overlay {
+  position:absolute; inset:0; z-index:2;
+  background:linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.5) 100%);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; transition:opacity .2s var(--ease);
+}
+.card:hover .card-overlay { opacity:1; }
+.play-btn {
+  width:52px; height:52px; border-radius:50%;
+  background:rgba(255,255,255,0.95); color:#0a0a0f;
+  display:flex; align-items:center; justify-content:center;
+  transform:scale(0.8); transition:transform .2s var(--ease);
+  box-shadow:0 8px 24px rgba(0,0,0,0.4);
+}
+.card:hover .play-btn { transform:scale(1); }
+.play-btn svg { width:20px; height:20px; margin-left:3px; }
+.card-body { padding:12px 14px; }
+.card-title { font-size:14px; font-weight:600; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.card-cat {
+  display:inline-flex; align-items:center;
+  font-size:11px; color:var(--text-2); font-weight:500;
+  background:var(--s3); padding:3px 8px; border-radius:99px;
+}
+.custom-card { border-style:dashed; border-width:1.5px; background:transparent; }
+.custom-card:hover { border-color:var(--accent); background:rgba(168,85,247,0.03); }
+.custom-card .card-cover { background:linear-gradient(135deg, rgba(168,85,247,0.08), rgba(236,72,153,0.08)); display:flex; align-items:center; justify-content:center; }
+.custom-plus { font-size:44px; color:var(--accent-b); font-weight:300; }
+
+.empty-state { grid-column:1/-1; text-align:center; padding:60px 20px; }
+.empty-state .icon { font-size:44px; margin-bottom:14px; opacity:0.5; }
+.empty-state .title { font-size:15px; font-weight:600; margin-bottom:6px; }
+.empty-state .desc { font-size:13px; color:var(--text-2); }
+
+/* SKELETON */
+.sk-card { border-radius:var(--r-lg); overflow:hidden; border:1px solid var(--border); }
+.sk-cover { aspect-ratio:16/10; }
+.sk-body { padding:14px; }
+.sk-line { height:12px; border-radius:4px; margin-bottom:6px; }
+.skeleton { background:linear-gradient(90deg,var(--s1) 0%,var(--s2) 50%,var(--s1) 100%); background-size:200% 100%; animation:shimmer 1.5s infinite; }
+@keyframes shimmer { 0% { background-position:-200% 0; } 100% { background-position:200% 0; } }
+
+/* PLAYER */
+.player { position:fixed; inset:0; z-index:200; background:#000; display:none; flex-direction:column; }
+.player.active { display:flex; }
+.player-bar {
+  display:flex; align-items:center; gap:10px;
+  padding:12px 16px;
+  background:rgba(13,13,19,0.9); backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.player-bar button {
+  width:38px; height:38px; border-radius:10px; border:none;
+  background:var(--s2); color:var(--text); font-size:15px;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:all .15s;
+}
+.player-bar button:hover { background:var(--s3); }
+.player-bar button svg { width:16px; height:16px; }
+.player-title { flex:1; font-size:14px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.player-frame-wrap { flex:1; position:relative; background:#000; }
+.player-frame-wrap iframe { width:100%; height:100%; border:none; display:block; }
+.spinner {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:44px; height:44px;
+  border:3px solid rgba(255,255,255,0.1); border-top-color:var(--accent);
+  border-radius:50%; animation:spin 0.8s linear infinite; z-index:5;
+}
+@keyframes spin { to { transform:translate(-50%,-50%) rotate(360deg); } }
+
+/* MODAL (Custom URL) */
+.modal-backdrop {
+  position:fixed; inset:0; z-index:300;
+  background:rgba(0,0,0,0.7); backdrop-filter:blur(8px);
+  display:none; align-items:center; justify-content:center; padding:20px;
+}
+.modal-backdrop.active { display:flex; }
+.modal {
+  background:var(--s1); border:1px solid var(--border-strong);
+  border-radius:var(--r-xl); width:100%; max-width:440px;
+  padding:24px; box-shadow:0 24px 64px rgba(0,0,0,0.5);
+  animation:popIn .2s var(--ease);
+}
+@keyframes popIn { from { transform:scale(0.95); opacity:0; } to { transform:scale(1); opacity:1; } }
+.modal-title { font-family:'Outfit',sans-serif; font-size:19px; font-weight:700; margin-bottom:6px; letter-spacing:-0.01em; }
+.modal-subtitle { font-size:13px; color:var(--text-2); margin-bottom:20px; }
+.modal input {
+  width:100%; padding:12px 14px;
+  background:var(--s2); border:1px solid var(--border);
+  border-radius:10px; color:var(--text); font-size:14px; outline:none;
+  margin-bottom:18px; transition:all .15s;
+}
+.modal input:focus { border-color:rgba(168,85,247,0.5); background:var(--s3); box-shadow:0 0 0 3px rgba(168,85,247,0.1); }
+.modal-actions { display:flex; gap:10px; }
+.modal-actions button { flex:1; padding:11px; border-radius:10px; border:none; font-size:13.5px; font-weight:600; cursor:pointer; transition:all .15s; }
+.btn-cancel { background:var(--s2); color:var(--text-2); }
+.btn-cancel:hover { background:var(--s3); color:var(--text); }
+
+/* =========================================
+   AD GATE MODAL (Rewarded Ad) - FIXED SIZE
+   ========================================= */
+.ad-gate-overlay {
+  position:fixed; inset:0; z-index:500;
+  background:rgba(0,0,0,0.85); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  display:none; align-items:center; justify-content:center; padding:16px;
+}
+.ad-gate-overlay.active { display:flex; }
+.ad-gate-card {
+  background:var(--s1); border:1px solid var(--border-strong);
+  border-radius:var(--r-xl); width:100%; max-width:340px; /* Size thoda kam kiya */
+  padding:20px; box-shadow:0 24px 64px rgba(0,0,0,0.6);
+  animation:popIn .3s var(--ease); text-align:center;
+  display: flex; flex-direction: column; align-items: center;
+}
+.ad-header {
+  width: 100%;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:12px; color:var(--text-2); margin-bottom:16px;
+  text-transform:uppercase; letter-spacing:0.5px; font-weight:600;
+}
+.ad-timer-badge {
+  background:rgba(236,72,153,0.15); color:#f9a8d4; 
+  padding:4px 10px; border-radius:99px; font-size:13px; font-weight:700;
+}
+.ad-container {
+  background:var(--s2); border-radius:var(--r-md);
+  width: 100%; height: 220px; /* FIXED HEIGHT */
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  margin-bottom:20px; overflow:hidden; border: 1px solid var(--border); position: relative;
+}
+/* YEH HAI SABSE BADA FIX: Native Ad ke andar ki cheezon ko shrink karna */
+.ad-container #container-24ff7458862ff32840d87c773868b9b5 {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: scale(0.85); /* Ad ko chhota kar diya taaki screen me fit ho */
+  transform-origin: center center;
+}
+.ad-container img, .ad-container iframe {
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  border-radius: 8px;
+}
+.ad-container * {
+  max-width: 100% !important; /* Ad ke andar kuch bhi bahar na nikle */
+}
+.btn-continue {
+  width:100%; padding:14px; border-radius:10px; border:none;
+  font-size:14px; font-weight:600; transition:all .3s;
+  background:var(--s3); color:var(--text-3); cursor:not-allowed;
+}
+.btn-continue.enabled {
+  background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#fff;
+  cursor:pointer; box-shadow:0 4px 20px rgba(168,85,247,0.4);
+}
+.btn-continue.enabled:active { transform:scale(0.98); }
+
+/* AD BANNER (Bottom) */
+.ad-banner {
+  position:fixed; bottom:0; left:0; right:0; z-index:90;
+  background:rgba(13,13,19,0.96); backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  padding:4px 0; min-height:58px; overflow:hidden;
+}
+.ad-banner iframe { display:block; border:none; max-width:100%; }
+body.player-open { padding-bottom:0; }
+body.player-open .ad-banner { display:none; }
+
+/* TOAST */
+.toast-container { position:fixed; bottom:80px; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; gap:8px; z-index:400; }
+.toast {
+  background:var(--s3); border:1px solid var(--border-strong);
+  padding:12px 18px; border-radius:10px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.5);
+  font-size:13.5px; transform:translateY(100px); opacity:0;
+  transition:all .25s var(--ease);
+}
+.toast.show { transform:translateY(0); opacity:1; }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-icon">🎮</div>
+      <div class="brand-name">GameHub</div>
+    </div>
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="search" type="text" placeholder="Search games...">
+    </div>
+    <button class="btn-primary" onclick="openCustomModal()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      <span class="label">Custom</span>
+    </button>
+  </div>
+</header>
+
+<div class="container">
+  <section class="hero" id="heroSection" style="display:none">
+    <div class="hero-card" id="heroCard">
+      <div class="hero-cover" id="heroCover"></div>
+      <div class="hero-badge">Featured Game</div>
+      <div class="hero-title" id="heroTitle">—</div>
+      <div class="hero-desc" id="heroDesc">—</div>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="playHero()">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          Play Now
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <div class="categories-wrap">
+    <div class="categories" id="categories"></div>
+  </div>
+
+  <section class="section">
+    <div class="section-header">
+      <div>
+        <div class="section-title" id="sectionTitle">All Games</div>
+        <div class="section-subtitle" id="sectionSubtitle">Browse our collection</div>
+      </div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+</div>
+
+<!-- GAME PLAYER -->
+<div class="player" id="player">
+  <div class="player-bar">
+    <button onclick="closePlayer()" title="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
+    <div class="player-title" id="playerTitle"></div>
+    <button onclick="openInNewTab()" title="Open in new tab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+    </button>
+    <button onclick="toggleFullscreen()" title="Fullscreen">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+    </button>
+  </div>
+  <div class="player-frame-wrap">
+    <div class="spinner" id="spinner"></div>
+    <iframe id="frame" allow="autoplay; fullscreen; encrypted-media; gamepad; microphone; camera; clipboard-write; accelerometer; gyroscope" allowfullscreen></iframe>
+  </div>
+</div>
+
+<!-- CUSTOM URL MODAL -->
+<div class="modal-backdrop" id="customModal" onclick="if(event.target===this)closeCustomModal()">
+  <div class="modal">
+    <div class="modal-title">Play Custom Game</div>
+    <div class="modal-subtitle">Paste any game URL and play it instantly</div>
+    <input id="customUrl" placeholder="https://example.com/game" autocomplete="off">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeCustomModal()">Cancel</button>
+      <button class="btn-primary" onclick="playCustom()" style="justify-content:center">Play Now</button>
+    </div>
+  </div>
+</div>
+
+<!-- AD GATE MODAL (Rewarded Ad System) -->
+<div class="ad-gate-overlay" id="adGateModal">
+  <div class="ad-gate-card">
+    <div class="ad-header">
+      <span>Advertisement</span>
+      <span class="ad-timer-badge" id="adTimerText">15s</span>
+    </div>
+    
+    <!-- Yahan Tera Native Ad Script Hai -->
+    <div class="ad-container" id="adsterraContainer">
+      <script async="async" data-cfasync="false" src="https://brijmohan.org/21/24ff7458862ff32840d87c773868b9b5"></script>
+      <div id="container-24ff7458862ff32840d87c773868b9b5"></div>
+    </div>
+
+    <button class="btn-continue" id="btnContinueGame" disabled onclick="startGameAfterAd()">
+      Please wait... (15s)
+    </button>
+  </div>
+</div>
+
+<!-- BOTTOM BANNER AD -->
+<div class="ad-banner" id="adBanner">
+  <script type="text/javascript">
+    atOptions = {
+      'key' : 'adb3c9b08e537d97ced5041615bed0a0',
+      'format' : 'iframe',
+      'height' : 50,
+      'width' : 320,
+      'params' : {}
+    };
+  </script>
+  <script type="text/javascript" src="https://brijmohan.org/22/adb3c9b08e537d97ced5041615bed0a0"></script>
+</div>
+
+<div class="toast-container" id="toasts"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyB_XjVgjJfax38MqEX7vLI4Eaaxa3iAMEY",
+  authDomain: "game-96dc4.firebaseapp.com",
+  databaseURL: "https://game-96dc4-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "game-96dc4",
+  storageBucket: "game-96dc4.firebasestorage.app",
+  messagingSenderId: "316547292230",
+  appId: "1:316547292230:web:9b9af5798185ce6f16be47"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+let allGames = [];
+let activeCategory = 'All';
+let searchQ = '';
+let currentGameUrl = '';
+
+// Ad Gate Variables
+let adTimerInterval = null;
+let adTimeLeft = 15; 
+let pendingGameUrl = '';
+let pendingGameName = '';
+
+showSkeletons();
+db.ref('games').on('value', snap => {
+  const val = snap.val() || {};
+  allGames = Object.keys(val).map(k => ({ id:k, ...val[k] }));
+  allGames.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+  renderHero();
+  renderCategories();
+  renderGames();
+}, err => {
+  document.getElementById('grid').innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><div class="title">Couldn't load games</div><div class="desc">Check your internet connection</div></div>`;
+});
+
+function showSkeletons() {
+  document.getElementById('grid').innerHTML = Array(10).fill(0).map(() => `
+    <div class="sk-card skeleton"><div class="sk-cover"></div>
+      <div class="sk-body"><div class="sk-line skeleton" style="width:70%"></div><div class="sk-line skeleton" style="width:40%"></div></div>
+    </div>`).join('');
+}
+
+function renderHero() {
+  const hero = document.getElementById('heroSection');
+  if (allGames.length === 0) { hero.style.display = 'none'; return; }
+  const g = allGames[0];
+  hero.style.display = 'block';
+  document.getElementById('heroTitle').textContent = g.name || 'Untitled';
+  document.getElementById('heroDesc').textContent = `${g.category||'New'} · Featured this week`;
+  const cover = document.getElementById('heroCover');
+  if (g.image) {
+    cover.style.backgroundImage = `url(${g.image})`;
+  } else {
+    cover.style.background = `linear-gradient(135deg, var(--accent), var(--accent-2))`;
+    cover.style.opacity = '0.3';
+  }
+  hero._game = g;
+}
+function playHero() {
+  const g = document.getElementById('heroSection')._game;
+  if (g) initiateAdGate(g.url, g.name);
+}
+
+function renderCategories() {
+  const cats = ['All', ...new Set(allGames.map(g => g.category).filter(Boolean))];
+  if (!cats.includes(activeCategory)) activeCategory = 'All';
+  document.getElementById('categories').innerHTML = cats.map(c =>
+    `<button class="cat-pill ${c===activeCategory?'active':''}" onclick="setCategory('${escapeHtml(c)}')">${escapeHtml(c)}</button>`
+  ).join('');
+}
+
+function setCategory(c) { activeCategory = c; renderCategories(); renderGames(); }
+document.getElementById('search').addEventListener('input', e => { searchQ = e.target.value.trim(); renderGames(); });
+
+function renderGames() {
+  let games = allGames;
+  if (activeCategory !== 'All') games = games.filter(g => g.category === activeCategory);
+  if (searchQ) {
+    const q = searchQ.toLowerCase();
+    games = games.filter(g => (g.name||'').toLowerCase().includes(q));
+  }
+  document.getElementById('sectionTitle').textContent = activeCategory === 'All' ? 'All Games' : activeCategory;
+  document.getElementById('sectionSubtitle').textContent = `${games.length} game${games.length!==1?'s':''} available`;
+
+  const grid = document.getElementById('grid');
+  const customCard = `<div class="card custom-card" onclick="openCustomModal()">
+      <div class="card-cover"><div class="custom-plus">+</div></div>
+      <div class="card-body">
+        <div class="card-title">Custom Game</div>
+        <div class="card-cat">Your own link</div>
+      </div>
+    </div>`;
+
+  if (games.length === 0) {
+    grid.innerHTML = customCard + `<div class="empty-state"><div class="icon">🎮</div>
+      <div class="title">${searchQ ? 'No games found' : 'No games yet'}</div>
+      <div class="desc">${searchQ ? 'Try a different search term' : 'Check back soon for new games'}</div>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = customCard + games.map(g => {
+    const letter = escapeHtml((g.name||'?')[0].toUpperCase());
+    const img = g.image ? `<img src="${escapeHtml(g.image)}" alt="" loading="lazy" onerror="this.style.display='none'">` : '';
+    return `<div class="card" onclick="initiateAdGate('${escapeHtml(g.url||'')}','${escapeHtml(g.name||'Game')}')">
+      <div class="card-cover">
+        <div class="card-fallback" style="background:linear-gradient(135deg,var(--accent),var(--accent-2))">${letter}</div>
+        ${img}
+        <div class="card-overlay">
+          <div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">${escapeHtml(g.name||'Untitled')}</div>
+        <div class="card-cat">${escapeHtml(g.category||'General')}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* =========================================
+   AD GATE LOGIC (Rewarded Ad Simulation)
+   ========================================= */
+
+function initiateAdGate(url, name) {
+  if (!url) { toast('Game link missing'); return; }
+  
+  if (adTimerInterval) clearInterval(adTimerInterval);
+  
+  pendingGameUrl = url;
+  pendingGameName = name;
+
+  document.getElementById('adGateModal').classList.add('active');
+  startAdTimer();
+}
+
+function startAdTimer() {
+  const timerText = document.getElementById('adTimerText');
+  const btn = document.getElementById('btnContinueGame');
+  
+  adTimeLeft = 15; 
+  timerText.innerText = adTimeLeft + 's';
+  btn.innerText = `Please wait... (${adTimeLeft}s)`;
+  btn.disabled = true;
+  btn.classList.remove('enabled');
+
+  adTimerInterval = setInterval(() => {
+    adTimeLeft--;
+    timerText.innerText = adTimeLeft + 's';
+    btn.innerText = `Please wait... (${adTimeLeft}s)`;
+
+    if (adTimeLeft <= 0) {
+      clearInterval(adTimerInterval);
+      timerText.innerText = 'Done';
+      btn.innerText = 'Continue to Game ▶';
+      btn.disabled = false;
+      btn.classList.add('enabled');
+    }
+  }, 1000);
+}
+
+function startGameAfterAd() {
+  const btn = document.getElementById('btnContinueGame');
+  if (btn.disabled) return; 
+
+  document.getElementById('adGateModal').classList.remove('active');
+  clearInterval(adTimerInterval);
+  
+  executeGamePlay(pendingGameUrl, pendingGameName);
+}
+
+function executeGamePlay(url, name) {
+  currentGameUrl = url;
+  document.getElementById('playerTitle').textContent = name || 'Game';
+  document.getElementById('spinner').style.display = 'block';
+  
+  const frame = document.getElementById('frame');
+  frame.src = url;
+  frame.onload = () => { document.getElementById('spinner').style.display = 'none'; };
+  
+  document.getElementById('player').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  document.body.classList.add('player-open');
+}
+
+/* ========================================= */
+
+function closePlayer() {
+  document.getElementById('player').classList.remove('active');
+  document.getElementById('frame').src = 'about:blank';
+  document.body.style.overflow = '';
+  document.body.classList.remove('player-open');
+  if (document.fullscreenElement) document.exitFullscreen().catch(()=>{});
+}
+function openInNewTab() { if (currentGameUrl) window.open(currentGameUrl, '_blank'); }
+function toggleFullscreen() {
+  const wrap = document.querySelector('.player-frame-wrap');
+  if (!document.fullscreenElement) {
+    (wrap.requestFullscreen || wrap.webkitRequestFullscreen || (()=>{})).call(wrap).catch(()=>{});
+  } else { document.exitFullscreen().catch(()=>{}); }
+}
+
+function openCustomModal() {
+  document.getElementById('customModal').classList.add('active');
+  setTimeout(() => document.getElementById('customUrl').focus(), 100);
+}
+function closeCustomModal() {
+  document.getElementById('customModal').classList.remove('active');
+  document.getElementById('customUrl').value = '';
+}
+function playCustom() {
+  let url = document.getElementById('customUrl').value.trim();
+  if (!url) { toast('Please enter a URL'); return; }
+  if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+  let name = 'Custom Game';
+  try { name = new URL(url).hostname.replace('www.',''); } catch(e) {}
+  closeCustomModal();
+  initiateAdGate(url, name);
+}
+document.getElementById('customUrl').addEventListener('keydown', e => { if (e.key === 'Enter') playCustom(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    if (document.getElementById('customModal').classList.contains('active')) closeCustomModal();
+    else if (document.getElementById('player').classList.contains('active')) closePlayer();
+  }
+});
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function toast(msg) {
+  const c = document.getElementById('toasts');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  c.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('show'));
+  setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 300); }, 2500);
+}
+</script>
+</body>
+</html>
